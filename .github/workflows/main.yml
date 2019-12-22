@@ -1,0 +1,35 @@
+name: docker build
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  radarr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone
+        uses: actions/checkout@master
+      - name: build
+        uses: triptixx/action-docker-build@master
+        with:
+          repo: radarr-dev
+      - name: test
+        uses: triptixx/action-docker-test@master
+        with:
+          verbose: true
+          repo: radarr-dev
+          run_args: -e API_KEY=gitaction
+          curl: :7878/api/system/status
+          curl_opts: --header x-api-key:gitaction
+          pipe: |
+            jq -r ".version" |
+            grep -qw "$(label org.label-schema.version)"
+      - name: publish
+        uses: triptixx/action-docker-publish@master
+        with:
+          docker_username: ${{ secrets.docker_username }}
+          docker_password: ${{ secrets.docker_password }}
+          from: radarr-dev
+          repo: ${{ secrets.docker_username }}/radarr
+          tags: latest,%label org.label-schema.version | %auto

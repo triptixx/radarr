@@ -1,34 +1,28 @@
-ARG ALPINE_TAG=3.10
-ARG DOTNET_TAG=3.0
-ARG RADARR_VER=
+ARG MONO_TAG=5.20.1.19
+ARG RADARR_VER=3.0.0.2325
 
-FROM mcr.microsoft.com/dotnet/core/sdk:${DOTNET_TAG}-alpine AS builder
+FROM loxoo/mono-runtime:${MONO_TAG} AS builder
 
 ARG RADARR_VER
-ARG DOTNET_TAG
 
-### install radarr
-WORKDIR /radarr-src
-RUN apk add --no-cache git jq binutils file; \
-    COMMITID=$(wget -q -O- https://ci.appveyor.com/api/projects/Jackett/jackett/build/${JACKETT_VER} \
-        | jq -r '.build.commitId'); \
-    git clone https://github.com/Jackett/Jackett.git .; \
-    git checkout $COMMITID; \
-    echo '{"configProperties":{"System.Globalization.Invariant":true}}' > src/Jackett.Server/runtimeconfig.template.json; \
-    dotnet publish -p:Version=${JACKETT_VER} -p:TrimUnusedDependencies=true -c Release -f netcoreapp${DOTNET_TAG} \
-        -r linux-musl-x64 -o /output/jackett src/Jackett.Server; \
-    find /output/jackett -exec sh -c 'file "{}" | grep -q ELF && strip --strip-debug "{}"' \;
+### install sonarr
+WORKDIR /output/radarr
+RUN apk add --no-cache curl; \
+    curl -fsSL "https://radarr.lidarr.audio/v1/update/aphrodite/updatefile?version=${RADARR_VER}&os=linux&runtime=mono&arch=x64" \
+        | tar xz --strip-components=1; \
+    find . -name '*.mdb' -delete; \
+    find ./UI -name '*.map' -delete; \
+    rm -r Radarr.Update
 
 COPY *.sh /output/usr/local/bin/
-RUN chmod -R u=rwX,go=rX /output/jackett; \
-    chmod +x /output/usr/local/bin/*.sh /output/jackett/jackett
+RUN chmod +x /output/usr/local/bin/*.sh
 
 #=============================================================
 
-FROM loxoo/alpine:${ALPINE_TAG}
+FROM loxoo/mono-runtime:${MONO_TAG}
 
 ARG RADARR_VER
-ENV SUID=931 SGID=900
+ENV SUID=932 SGID=900
 
 LABEL org.label-schema.name="radarr" \
       org.label-schema.description="A Docker image for the Movies management software Radarr" \
@@ -39,7 +33,7 @@ COPY --from=builder /output/ /
 
 RUN apk add --no-cache sqlite-libs libmediainfo xmlstarlet
 
-VOLUME ["/config", "/medias"]
+VOLUME ["/config"]
 
 EXPOSE 7878/TCP
 
@@ -48,4 +42,4 @@ HEALTHCHECK --start-period=10s --timeout=5s \
             --header "x-api-key: $(xmlstarlet sel -t -v '/Config/ApiKey' /config/config.xml)"
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
-CMD ["/radarr/radarr", "--no-browser", "--data=/config"]
+CMD ["mono", "/radarr/Radarr.exe", "--no-browser", "--data=/config"]
