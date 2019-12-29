@@ -1,5 +1,5 @@
 ARG MONO_TAG=5.20.1.19
-ARG RADARR_VER=3.0.0.2415
+ARG RADARR_VER=3.0.0.2423
 
 FROM loxoo/mono-runtime:${MONO_TAG} AS builder
 
