@@ -1,5 +1,5 @@
 ARG MONO_TAG=5.20.1.19
-ARG RADARR_VER=3.0.0.2429
+ARG RADARR_VER=3.0.0.2457
 
 FROM loxoo/mono-runtime:${MONO_TAG} AS builder
 
@@ -42,4 +42,4 @@ HEALTHCHECK --start-period=10s --timeout=5s \
             --header "x-api-key: $(xmlstarlet sel -t -v '/Config/ApiKey' /config/config.xml)"
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
-CMD ["mono", "/radarr/Radarr.exe", "--no-browser", "--data=/config"]
+CMD ["mono", "--debug", "/radarr/Radarr.exe", "--no-browser", "--data=/config"]
