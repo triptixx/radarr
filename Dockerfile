@@ -1,14 +1,14 @@
-ARG MONO_TAG=6.13.0
-ARG RADARR_VER=3.0.0.3095
+ARG ALPINE_TAG=3.12
+ARG RADARR_VER=3.0.0.3918
 
-FROM loxoo/mono-runtime:${MONO_TAG} AS builder
+FROM loxoo/alpine:${ALPINE_TAG} AS builder
 
 ARG RADARR_VER
 
 ### install sonarr
 WORKDIR /output/radarr
 RUN apk add --no-cache curl; \
-    curl -fsSL "https://radarr.lidarr.audio/v1/update/aphrodite/updatefile?version=${RADARR_VER}&os=linux&runtime=mono&arch=x64" \
+    curl -fsSL "https://radarr.servarr.com/v1/update/nightly/updatefile?version=${RADARR_VER}&os=linuxmusl&runtime=netcore&arch=x64" \
         | tar xz --strip-components=1; \
     find . -name '*.mdb' -delete; \
     find ./UI -name '*.map' -delete; \
@@ -19,7 +19,7 @@ RUN chmod +x /output/usr/local/bin/*.sh
 
 #=============================================================
 
-FROM loxoo/mono-runtime:${MONO_TAG}
+FROM loxoo/alpine:${ALPINE_TAG}
 
 ARG RADARR_VER
 ENV SUID=932 SGID=900
@@ -31,7 +31,7 @@ LABEL org.label-schema.name="radarr" \
 
 COPY --from=builder /output/ /
 
-RUN apk add --no-cache sqlite-libs libmediainfo xmlstarlet
+RUN apk add --no-cache libstdc++ libgcc libintl icu-libs sqlite-libs libmediainfo xmlstarlet
 
 VOLUME ["/config"]
 
@@ -42,4 +42,4 @@ HEALTHCHECK --start-period=10s --timeout=5s \
             --header "x-api-key: $(xmlstarlet sel -t -v '/Config/ApiKey' /config/config.xml)"
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
-CMD ["mono", "--debug", "/radarr/Radarr.exe", "--no-browser", "--data=/config"]
+CMD ["/radarr/Radarr.exe", "--no-browser", "--data=/config"]
