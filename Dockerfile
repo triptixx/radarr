@@ -1,5 +1,5 @@
 ARG ALPINE_TAG=3.13
-ARG RADARR_VER=3.1.0.4709
+ARG RADARR_VER=3.1.1.4954
 
 FROM loxoo/alpine:${ALPINE_TAG} AS builder
 
@@ -7,8 +7,7 @@ ARG RADARR_VER
 
 ### install sonarr
 WORKDIR /output/radarr
-RUN apk add --no-cache curl; \
-    curl -fsSL "https://radarr.servarr.com/v1/update/nightly/updatefile?version=${RADARR_VER}&os=linuxmusl&runtime=netcore&arch=x64" \
+RUN wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.master.${RADARR_VER}.linux-musl-core-x64.tar.gz \
         | tar xz --strip-components=1; \
     find . -name '*.mdb' -delete; \
     find ./UI -name '*.map' -delete; \
