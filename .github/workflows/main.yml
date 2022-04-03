@@ -20,7 +20,7 @@ jobs:
           verbose: true
           repo: radarr-dev
           run_args: -e API_KEY=gitaction
-          curl: :7878/api/system/status
+          curl: :7878/api/v3/system/status
           curl_opts: --header x-api-key:gitaction
           pipe: |
             jq -r ".version" |
