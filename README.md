@@ -1,15 +1,14 @@
 [hub]: https://hub.docker.com/r/loxoo/radarr
-[mbdg]: https://microbadger.com/images/loxoo/radarr
-[git]: https://github.com/triptixx/radarr
-[actions]: https://github.com/triptixx/radarr/actions
+[git]: https://github.com/triptixx/radarr/tree/master
+[actions]: https://github.com/triptixx/radarr/actions/workflows/main.yml
 
 # [loxoo/radarr][hub]
-[![Layers](https://images.microbadger.com/badges/image/loxoo/radarr.svg)][mbdg]
-[![Latest Version](https://images.microbadger.com/badges/version/loxoo/radarr.svg)][hub]
-[![Git Commit](https://images.microbadger.com/badges/commit/loxoo/radarr.svg)][git]
+[![Git Commit](https://img.shields.io/github/last-commit/triptixx/radarr/master)][git]
+[![Build Status](https://github.com/triptixx/radarr/actions/workflows/main.yml/badge.svg?branch=master)][actions]
+[![Latest Version](https://img.shields.io/docker/v/loxoo/radarr/latest)][hub]
+[![Size](https://img.shields.io/docker/image-size/loxoo/radarr/latest)][hub]
 [![Docker Stars](https://img.shields.io/docker/stars/loxoo/radarr.svg)][hub]
 [![Docker Pulls](https://img.shields.io/docker/pulls/loxoo/radarr.svg)][hub]
-[![Build Status](https://github.com/triptixx/radarr/workflows/docker%20build/badge.svg)][actions]
 
 ## Usage
 

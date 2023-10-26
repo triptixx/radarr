@@ -1,5 +1,5 @@
-ARG ALPINE_TAG=3.15
-ARG RADARR_VER=4.0.5.5981
+ARG ALPINE_TAG=3.18
+ARG RADARR_VER=5.0.3.8127
 
 FROM loxoo/alpine:${ALPINE_TAG} AS builder
 
@@ -30,7 +30,7 @@ LABEL org.label-schema.name="radarr" \
 
 COPY --from=builder /output/ /
 
-RUN apk add --no-cache libstdc++ libgcc libintl icu-libs sqlite-libs libmediainfo xmlstarlet
+RUN apk add --no-cache icu-libs sqlite-libs libmediainfo xmlstarlet
 
 VOLUME ["/config"]
 

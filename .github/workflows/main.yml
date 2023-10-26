@@ -19,9 +19,9 @@ jobs:
         with:
           verbose: true
           repo: radarr-dev
-          run_args: -e API_KEY=gitaction
+          run_args: -e API_KEY=ca6aab1c-1bcd-4877-b420-a98f0cb53064
           curl: :7878/api/v3/system/status
-          curl_opts: --header x-api-key:gitaction
+          curl_opts: --header x-api-key:ca6aab1c-1bcd-4877-b420-a98f0cb53064
           pipe: |
             jq -r ".version" |
             grep -qw "$(label org.label-schema.version)"
