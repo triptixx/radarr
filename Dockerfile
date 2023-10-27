@@ -5,7 +5,7 @@ FROM loxoo/alpine:${ALPINE_TAG} AS builder
 
 ARG RADARR_VER
 
-### install sonarr
+### install radarr
 WORKDIR /output/radarr
 RUN wget -O- https://github.com/Radarr/Radarr/releases/download/v${RADARR_VER}/Radarr.master.${RADARR_VER}.linux-musl-core-x64.tar.gz \
         | tar xz --strip-components=1; \
