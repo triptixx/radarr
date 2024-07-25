@@ -37,7 +37,7 @@ VOLUME ["/config"]
 EXPOSE 7878/TCP
 
 HEALTHCHECK --start-period=10s --timeout=5s \
-    CMD wget -qO /dev/null 'http://localhost:7878/api/v3/system/status' \
+    CMD wget -qO /dev/null 'http://127.0.0.1:7878/api/v3/system/status' \
             --header "x-api-key: $(xmlstarlet sel -t -v '/Config/ApiKey' /config/config.xml)"
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
